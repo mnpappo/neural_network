@@ -26,10 +26,28 @@ result = sigmoid(a)
 # our logistic theano func retuns a 2d array/matrix thats why we neeed to
 # flatten it to plot
 plt.plot(a, np.array(result).flatten())
-plt.title('logistic/sigmodid')
+plt.title('logistic/sigmoid function')
 plt.grid(True)
 plt.xlabel("input", color='red')
-plt.xlabel("logistic output", color='red')
+plt.ylabel("logistic output", color='red')
 plt.show()
 
-#
+# tanh function
+def tanh(a):
+    x = T.dmatrix('x')
+    p, q = T.exp(x)-T.exp(-x), T.exp(x)+T.exp(-x)
+    t =  p/q
+    tanhfunc = theano.function([x], t)
+    result = tanhfunc([a])
+    return result
+
+# sample input
+a = np.arange(-10,10,.2)
+result = tanh(a)
+
+plt.plot(a, np.array(result).flatten())
+plt.title('tanh function')
+plt.grid(True)
+plt.xlabel("input", color='red')
+plt.ylabel("tanh output", color='red')
+plt.show()
