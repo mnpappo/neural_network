@@ -1,3 +1,11 @@
+__author__ = "Nadimozzaman Pappo"
+__github__ = "http://github.com/mnpappo"
+
+"""
+This script use keras & cifar10 dataset to test random Dropout effects on result.
+"""
+
+
 from __future__ import print_function
 from keras.datasets import cifar10
 from keras.utils import np_utils
@@ -6,12 +14,14 @@ from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution2D, MaxPooling2D
 from keras.optimizers import SGD
 
+# defining the settings
 batch_size = 32
 nb_classes = 10
 nb_epoch = 1
 img_channels = 3
 img_rows, img_cols = 32, 32
 
+# loading cifar10 dataset
 def load_dataset():
    # the data, shuffled and split between train and test sets
    (X_train, y_train), (X_test, y_test) = cifar10.load_data()
@@ -30,6 +40,7 @@ def load_dataset():
 
    return X_train, Y_train, X_test, Y_test
 
+# creating the network architecture
 def make_network():
    model = Sequential()
 
@@ -57,10 +68,10 @@ def make_network():
 
    return model
 
+# training model with SGD with momentum
 def train_model(model, X_train, Y_train, X_test, Y_test):
 
    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-   # model.compile(loss='categorical_crossentropy', optimizer=sgd)
    model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
    # model.fit(X_train, Y_train, nb_epoch=nb_epoch, batch_size=batch_size, validation_split=0.1, show_accuracy=True, verbose=1)
@@ -69,16 +80,15 @@ def train_model(model, X_train, Y_train, X_test, Y_test):
    print('Testing...')
    res = model.evaluate(X_test, Y_test, batch_size=batch_size, verbose=1)
    print("--------")
-   print(res)
-   print("--------")
    print('Test accuracy: {0}'.format(res[1]))
 
-
+# saving the trained model & cifar10 model architecture
 def save_model(model):
 
    model_json = model.to_json()
    open('data/cifar10_architecture.json', 'w').write(model_json)
    model.save_weights('data/cifar10_weights.h5', overwrite=True)
+
 
 if __name__ == '__main__':
     X_train, Y_train, X_test, Y_test = load_dataset()
