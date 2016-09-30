@@ -1,3 +1,10 @@
+__author__ = "Nadimozzaman Pappo"
+__github__ = "http://github.com/mnpappo"
+
+"""
+Just Testing using saved model.
+"""
+
 import numpy as np
 import scipy.misc
 from keras.models import model_from_json
