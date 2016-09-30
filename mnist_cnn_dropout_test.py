@@ -5,7 +5,6 @@ __github__ = "http://github.com/mnpappo"
 This script use keras & minist dataset to test random Dropout effects on result.
 """
 
-from __future__ import print_function
 import numpy as np
 from keras.datasets import mnist
 from keras.models import Sequential
