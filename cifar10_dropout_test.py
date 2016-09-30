@@ -5,8 +5,6 @@ __github__ = "http://github.com/mnpappo"
 This script use keras & cifar10 dataset to test random Dropout effects on result.
 """
 
-
-from __future__ import print_function
 from keras.datasets import cifar10
 from keras.utils import np_utils
 from keras.models import Sequential
@@ -17,9 +15,17 @@ from keras.optimizers import SGD
 # defining the settings
 batch_size = 32
 nb_classes = 10
-nb_epoch = 1
+nb_epoch = 10
 img_channels = 3
 img_rows, img_cols = 32, 32
+
+# taking Dropout
+dropout = input("Please give a Dropout value(0-1): ")
+while dropout < 0 or dropout > 1:
+    print("Dropout value must be in range 0-1.")
+    dropout = input("Please give a Dropout value(0-1): ")
+
+print("Using Dropout {0}".format(dropout))
 
 # loading cifar10 dataset
 def load_dataset():
@@ -43,26 +49,28 @@ def load_dataset():
 # creating the network architecture
 def make_network():
    model = Sequential()
-
-   model.add(Convolution2D(32, 3, 3, border_mode='same',
-                           input_shape=(img_channels, img_rows, img_cols)))
+   model.add(Convolution2D(32, 3, 3, border_mode='same', input_shape=(img_channels, img_rows, img_cols)))
    model.add(Activation('relu'))
    model.add(Convolution2D(32, 3, 3))
    model.add(Activation('relu'))
    model.add(MaxPooling2D(pool_size=(2, 2)))
-   model.add(Dropout(0.25))
+   # drop out 1
+   model.add(Dropout(dropout))
 
    model.add(Convolution2D(64, 3, 3, border_mode='same'))
    model.add(Activation('relu'))
    model.add(Convolution2D(64, 3, 3))
    model.add(Activation('relu'))
    model.add(MaxPooling2D(pool_size=(2, 2)))
-   model.add(Dropout(0.25))
+   # drop out 2
+   model.add(Dropout(dropout))
 
    model.add(Flatten())
    model.add(Dense(512))
    model.add(Activation('relu'))
-   model.add(Dropout(0.5))
+   # drop out 3
+   model.add(Dropout(dropout))
+
    model.add(Dense(nb_classes))
    model.add(Activation('softmax'))
 
@@ -70,7 +78,6 @@ def make_network():
 
 # training model with SGD with momentum
 def train_model(model, X_train, Y_train, X_test, Y_test):
-
    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
    model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
@@ -84,7 +91,6 @@ def train_model(model, X_train, Y_train, X_test, Y_test):
 
 # saving the trained model & cifar10 model architecture
 def save_model(model):
-
    model_json = model.to_json()
    open('data/cifar10_architecture.json', 'w').write(model_json)
    model.save_weights('data/cifar10_weights.h5', overwrite=True)
@@ -94,4 +100,5 @@ if __name__ == '__main__':
     X_train, Y_train, X_test, Y_test = load_dataset()
     model = make_network()
     trained_model = train_model(model, X_train, Y_train, X_test, Y_test)
+    print("Training completed. Saving the model.")
     save_model(model)
