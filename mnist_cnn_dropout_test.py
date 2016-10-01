@@ -12,6 +12,9 @@ from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
 from keras import backend as K
+from keras.utils.visualize_util import plot
+from matplotlib.cm import binary
+import matplotlib.pyplot as plt
 
 batch_size = 128
 nb_classes = 10
@@ -35,6 +38,21 @@ while dropout < 0 or dropout > 1:
     dropout = input("Please give a Dropout value(0-1): ")
 
 print("Using Dropout {0}".format(dropout))
+
+# plotting/visualizing layers weight
+def plot_layer(layer, x, y):
+    layer_config = layer.get_config()
+    print("Layer Name: ", layer_config['name'])
+    layer_weight, layer_bias = layer.get_weights()
+    figure = plt.figure()
+    for i in range(len(layer_weight)):
+        ax = figure.add_subplot(y, x, i+1)
+        ax.matshow(layer_weight[i][0], cmap=binary)
+        plt.xticks(np.array([]))
+        plt.yticks(np.array([]))
+    figure.set_tight_layout(True)
+    plt.show()
+    # figure.savefig('test.png')
 
 def load_dataset():
     # the data, shuffled and split between train and test sets
@@ -109,3 +127,6 @@ if __name__ == '__main__':
     trained_model = train_model(model, X_train, Y_train, X_test, Y_test)
     print("Training completed. Saving the model.")
     save_model(model)
+    plot(model, to_file='data/model.png')
+    # visualizing weights for first layer
+    # plot_layer(model.layers[0], 8, 4)
