@@ -15,6 +15,7 @@ from keras import backend as K
 from keras.utils.visualize_util import plot
 from matplotlib.cm import binary
 import matplotlib.pyplot as plt
+import random
 
 batch_size = 128
 nb_classes = 10
@@ -32,12 +33,16 @@ kernel_size = (3, 3)
 np.random.seed(1337)  # for reproducibility
 
 # taking Dropout
-dropout = input("Please give a Dropout value(0-1): ")
-while dropout < 0 or dropout > 1:
-    print("Dropout value must be in range 0-1.")
-    dropout = input("Please give a Dropout value(0-1): ")
+# dropout = input("Please give a Dropout value(0-1): ")
+# while dropout < 0 or dropout > 1:
+#     print("Dropout value must be in range 0-1.")
+#     dropout = input("Please give a Dropout value(0-1): ")
+#
+# print("Using Dropout {0}".format(dropout))
 
-print("Using Dropout {0}".format(dropout))
+
+def get_random_dropout(a, b):
+    return round(random.uniform(a, b), 2)
 
 # plotting/visualizing layers weight
 def plot_layer(layer, x, y):
@@ -92,11 +97,21 @@ def make_network(input_shape):
     model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
+
+    dropout = get_random_dropout(0,.4)
+    layer_info = "MaxPooling2D"
+    print("using dropout: " + str(dropout) + " after layer: " + layer_info)
     model.add(Dropout(dropout))
+
     model.add(Flatten())
     model.add(Dense(128))
     model.add(Activation('relu'))
+
+    dropout = get_random_dropout(0,.6)
+    layer_info = "Activation"
+    print("using dropout: " + str(dropout) + " after layer: " + layer_info)
     model.add(Dropout(dropout))
+
     model.add(Dense(nb_classes))
     model.add(Activation('softmax'))
 
