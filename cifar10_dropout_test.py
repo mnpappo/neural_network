@@ -12,6 +12,8 @@ from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Convolution2D, MaxPooling2D
 from keras.optimizers import SGD
 
+from randomdropouttest import get_random_dropout, RandomDropout
+
 # defining the settings
 batch_size = 32
 nb_classes = 10
@@ -19,13 +21,6 @@ nb_epoch = 10
 img_channels = 3
 img_rows, img_cols = 32, 32
 
-# taking Dropout
-dropout = input("Please give a Dropout value(0-1): ")
-while dropout < 0 or dropout > 1:
-    print("Dropout value must be in range 0-1.")
-    dropout = input("Please give a Dropout value(0-1): ")
-
-print("Using Dropout {0}".format(dropout))
 
 # loading cifar10 dataset
 def load_dataset():
@@ -54,8 +49,10 @@ def make_network():
    model.add(Convolution2D(32, 3, 3))
    model.add(Activation('relu'))
    model.add(MaxPooling2D(pool_size=(2, 2)))
+
    # drop out 1
-   model.add(Dropout(dropout))
+   shape = (32,  32,  15,  15)
+   model.add(RandomDropout(get_random_dropout(0, 1, shape)))
 
    model.add(Convolution2D(64, 3, 3, border_mode='same'))
    model.add(Activation('relu'))
@@ -63,13 +60,13 @@ def make_network():
    model.add(Activation('relu'))
    model.add(MaxPooling2D(pool_size=(2, 2)))
    # drop out 2
-   model.add(Dropout(dropout))
+   # model.add(Dropout(dropout))
 
    model.add(Flatten())
    model.add(Dense(512))
    model.add(Activation('relu'))
    # drop out 3
-   model.add(Dropout(dropout))
+   # model.add(Dropout(dropout))
 
    model.add(Dense(nb_classes))
    model.add(Activation('softmax'))
@@ -100,5 +97,5 @@ if __name__ == '__main__':
     X_train, Y_train, X_test, Y_test = load_dataset()
     model = make_network()
     trained_model = train_model(model, X_train, Y_train, X_test, Y_test)
-    print("Training completed. Saving the model.")
-    save_model(model)
+    # print("Training completed. Saving the model.")
+    # save_model(model)

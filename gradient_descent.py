@@ -53,6 +53,7 @@ for i in xi:
     # update m,c simultenously
     m = m - (gwrtmval(m,  i, c) * lr)
     c = c - (gwrtcval(m, i, c) * lr)
+    print (m, c)
     # save m and c for plotting
     fm.append(m)
     fc.append(c)
